@@ -1,0 +1,88 @@
+<html>
+    <title>Who's Turn!</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+
+        <script>
+            var students= [];
+            var remainingStudents =[];
+            var doneStudents =[];
+            var counter=0;
+            function setStudents()
+            {
+                var strStudents = localStorage.getItem("varg");
+                if(null !== strStudents && strStudents !="")
+                {
+                    students = strStudents.split(",");
+                    remainingStudents = [...students];
+                    document.getElementById("txtStudents").value = strStudents;
+                    document.getElementById("divAdder").style.display = "none";
+                }
+                else
+                {
+                    document.getElementById("divAdder").style.display = "block";
+                    alert("Let's start, please add comma seperated students names (e.g. nameA,nameB,nameC) in the text box and click Save button.");
+                }
+                
+            }
+            function addStudents()
+            {
+                var strStudents = document.getElementById("txtStudents").value;
+                students = strStudents.split(",");
+                remainingStudents = [...students];
+                localStorage.setItem("varg",strStudents);
+                document.getElementById("divAdder").style.display = "none";
+            }
+            function whosTurn()
+            {
+                if(remainingStudents.length===0)
+                {
+                    document.getElementById("lblNext").innerText = "All Done!";
+                    remainingStudents = [...students];
+                    doneStudents = [];
+                    counter++;
+                    document.getElementById("lblHistory").innerText +=  "\nRound "+counter+": "+document.getElementById("lblDone").innerText; 
+                    document.getElementById("lblDone").innerText="";                    
+                    return;
+                }
+                var index = Math.floor(Math.random() * remainingStudents.length);
+                var name = remainingStudents[index];
+                document.getElementById("lblNext").innerText =name;
+                remainingStudents.splice(index,1);
+                doneStudents.push(name);
+                document.getElementById("lblDone").innerText = doneStudents.join(", ");
+            }
+
+            function toggleVisibility()
+            {
+               if(document.getElementById("divAdder").style.display === "block")
+               { 
+                   document.getElementById("divAdder").style.display = "none";
+               }
+               else
+               {
+                   document.getElementById("divAdder").style.display = "block";
+               }
+            }
+</script>
+    </head>
+    <body onload="setStudents()">
+        Howdy Class!
+        <div>
+            <input type="button" id="btnToggle" onclick="toggleVisibility()" value="Students">
+            <span id="divAdder">
+                <span><textarea id="txtStudents" placeholder="Add Students"></textarea> 
+                <input type="button" value="Save" onclick="addStudents()"></span> 
+            </span>
+        </div>
+       <br/>
+       <div><h1><div id="lblNext"></div></h1></div>
+       <div><input type="button" onclick="whosTurn()" value="Who's Turn"/></button></div>
+       <br/>
+       <div id="lblDone"></div>
+       <br/><br/>
+        <div id="lblHistory"></div>
+    </body>
+</html>
